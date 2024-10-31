@@ -1,0 +1,26 @@
+1 - Alterar o algoritmo que define se o mês cadastrado tem yellow flag ou red flag. Se o valor inserido é entre 6 a 8h de sol é yellow flag, se for maior que isso é Red Flag
+2 - Agora será permitido exportar ou fazer download de apenas certificados aposentados. Devemos colocar um tooltip com uma mensagem nos demais certificados da tabela
+3 - Criar uma feature onde o cliente (Gerador de energia) envie requisitos de emissão de RECs ou qualquer outro template para a SGS aprovar através de um processo. Regras:
+    Gerais:
+        Os pedidos precisam ter vindo de usinas sem RED flag
+        Cada cliente GD pode requisitar apenas 1 processo de avaliação para a SGS por semana
+    Como usuário da SGS eu espero:
+        Ter de uma tela / componente ou local para que eu possa ler e analisar os pedidos de emissão de REC
+        Que os itens sigam uma sequencia do mais recente para o mais antigo, como uma caixa de e-mail
+        Ter 2 botões na frente de cada pedido de emissão, para que o agente da SGS possa aprovar ou rejeitar.
+            (PEDIDO da ABSOLAR) > (Pode expandir a lista e recolher)
+                CERT 1 - X X X X X X X 800 RECS [Download | Preview] . (Approve | Reject)
+                CERT 2 - X X X X X X X 800 RECS. (Approve | Reject)
+                CERT 3 - X X X X X X X 800 RECS. (Approve | Reject)
+                CERT 4 - X X X X X X X 800 RECS. (Approve | Reject)
+        Ter a clara identificação sobre os itens que estão pendentes e os que precisam ser aprovados.
+        Receber um e-mail indicando que um novo processo precisa ser avaliado
+    Como um cliente Gerador eu espero:
+        Ter uma tela ou espaço onde eu crie esses pedido e possa enviar para análise da SGS
+            (PEDIDO da ABSOLAR) >              (Create Process)
+                [ X] REQUEST 1 - X X X X X X X 4 RECS ( 1/5 - 30/6)
+                [ X] REQUEST 2 - X X X X X X X 1 RECS ( 9/5 -27/5)
+        Ter uma dinâmica simples e fácil para criar esses pedidos. De forma que evite que pedidos inválidos ou duplicados sejam criados
+        Ter um feedback sobre o status do pedido em algum lugar
+        Conseguir emitir os RECs normalmente apos a aprovação
+4 - Criar uma tela de Dashboard e um Relatório (a etapa de detalhamento ainda precisa confirmada) para a SGS
