@@ -54,7 +54,7 @@ export const App = () => {
 		}
 		console.log("connectOnchain");
 		setCount(count + 1);
-
+		let sendAgain = false;
 		const holderPair = uiKeyring.getPair(ALICE);
 		const genesisHash = api.genesisHash;
 		const runtimeVersion = api.runtimeVersion;
@@ -75,79 +75,58 @@ export const App = () => {
 					nonce,
 					runtimeVersion,
 				});
-			const sub = await api.rpc.author.submitAndWatchExtrinsic(
-				transfer.toJSON(),
-				async (result) => {
-					if (result.isInBlock || result.isFinalized) {
-						console.log(`Block Created`);
-						counter += 1;
-						blockhash = result.inner.toString();
-						sub()
-					} else {
-						console.log(`====================`);
-						console.log(`Block Status: ${result.type}`);
-						console.log(`====================`);
-						if (result.isInvalid) {
-							console.log(`*********************************************************************************`);
-							console.log(`Invalid Transaction`);
+
+			while (!blockhash) {
+				if (sendAgain) {
+					reSends += 1;
+					limit = 0;
+				}
+				console.log("Inside of While")
+				const sub = await api.rpc.author.submitAndWatchExtrinsic(
+					transfer.toJSON(),
+					async (result) => {
+						if (result.isInBlock || result.isFinalized) {
+							console.log(`Block Created`);
 							counter += 1;
-							const retrySigned = transfer.toJSON()
-							console.log(transfer.toJSON());
-							console.log(`BlockNumber: ${(await api.rpc.chain.getHeader()).number}`);
-							console.log(`*********************************************************************************`);
-							counterErrors += 1;
-							// sub();
-							console.log(`Waiting for Next Block ....`);
-							await new Promise((resolve) => {
-								setTimeout(() => {
-									resolve("response");
-								}, 13000);
-							});
-							console.log(`Retry sending transaction`);
-							// const NEW_TRY = await api.rpc.author.submitExtrinsic(transfer.toJSON());
-							const sub2 = await api.rpc.author.submitExtrinsic(
-								retrySigned,
-							);
-							console.log('Sub2')
-							console.log(sub2.toString())
-							console.log(sub2.toHex())
-							console.log(sub2.hash.toString())
-							console.log(sub2.hash.toHex())
-							console.log('Enviou?????')
-							console.log('Transaction é a de:', counter)
-							console.log(`BlockNumber: ${(await api.rpc.chain.getHeader()).number}`);
-							console.log(`BlockNumber HASH: ${(await api.rpc.chain.getHeader()).hash}`);
-							console.log('Waiting for next blockhash...')
-							await new Promise((resolve) => {
-								setTimeout(() => {
-									resolve("response");
-								}, 13000);
-							});
-							blockhash = (await api.rpc.chain.getHeader()).hash.toString();
-							console.log('Blockhash: ', blockhash)
-							await new Promise((resolve) => {
-								setTimeout(() => {
-									resolve("response");
-								}, 12000);
-							});
-							// if (blockhash) {
-							// 	reSends += 1;
-							// }
-							reSends += 1;
-							console.log(`========= END ===========`);
+							blockhash = result.inner.toString();
+							sendAgain = false;
+							if (sendAgain) {
+								console.log("Send Again WORKED")
+								console.log("blockhash: ", blockhash)
+							}
+							sub()
+						} else {
+							console.log(`====================`);
+							console.log(`Block Status: ${result.type}`);
+							console.log(`====================`);
+							if (result.isInvalid) {
+								console.log(`*********************************************************************************`);
+								console.log(`Invalid Transaction`);
+								console.log(transfer.toJSON());
+								console.log(`BlockNumber: ${(await api.rpc.chain.getHeader()).number}`);
+								console.log(`*********************************************************************************`);
+								counterErrors += 1;
+								sendAgain = true;
+								console.log(`========= END ===========`);
+								console.log(`Waiting for Next Block Invalid ....`);
+								sub();
+							}
 						}
-					}
-				},
-			);
-			do {
-				limit += 1;
-				await new Promise((resolve) => {
-					setTimeout(() => {
-						resolve("response");
-					}, 1000);
-				}); // aguardar 3 segundos
-				console.log("Waiting... ", limit);
-			} while (!blockhash && limit < 80);
+					},
+				);
+				console.log(`Waiting for Next Block do while ....`);
+				do {
+					limit += 1;
+					await new Promise((resolve) => {
+						setTimeout(() => {
+							resolve("response");
+						}, 1000);
+					}); // aguardar 3 segundos
+					console.log("Waiting... ", limit);
+				} while (!blockhash && limit < 36);
+			}
+			console.log("Outise of WHile")
+
 			if (blockhash) {
 				console.log("erros ", counterErrors);
 				console.log("Total: ", counter);
